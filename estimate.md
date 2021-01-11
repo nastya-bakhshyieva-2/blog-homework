@@ -12,12 +12,13 @@
 <br>
 <h3> 2. Creation simple structure with Spring JPA;</h3>
 <ul>
-<li>Create content of POJO-classes: User, Comments, etc. - <strong>30 minutes</strong></li>
+<li>Create content of POJO-classes: User, Comments, etc. - <strong>30 minutes</strong><small>(done in previous step)</small></li>
 <li>Link classes to db (also create liquibase changelog) - <strong>40 minutes</strong></li>
 <li>Configure application.properties. - <strong>15 minutes</strong></li>
 <li>Implement JpaRepositories for our POJO-classes - <strong>30 minutes</strong></li>
 </ul>    
 <h5> Total time: 1:55</h5>
+<h5>DONE - taken around 40 minutes</h5>
 <br>
 <h3> 3. Configure Spring Security and add jwt token support </h3>
 <ul>

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="1.0.0" author="nastya.bakhshyieva">
+       <createTable tableName="users">
+           <column name="id" type="bigint" autoIncrement="true">
+               <constraints primaryKey="true" nullable="false"/>
+           </column>
+           <column name="first_name" type="varchar(255)">
+               <constraints nullable="false"/>
+           </column>
+           <column name="last_name" type="varchar(255)">
+               <constraints nullable="false"/>
+           </column>
+           <column name="password" type="varchar(255)">
+               <constraints nullable="false"/>
+           </column>
+           <column name="email" type="varchar(255)">
+               <constraints nullable="false" unique="true"/>
+           </column>
+           <column name="created_at" type="timestamp" defaultValue="current_timestamp()">
+               <constraints nullable="false"/>
+           </column>
+           <column name="status" type="varchar(50)" defaultValue="NON_ACTIVATED">
+               <constraints nullable="false"/>
+           </column>
+       </createTable>
+    </changeSet>
+
+    <changeSet id="1.0.1" author="nastya.bakhshyieva">
+        <createTable tableName="articles">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="title" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="text" type="varchar(1000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="varchar(50)" defaultValue="DRAFT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="author_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValue="current_timestamp()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp" defaultValue="current_timestamp()">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1.0.2" author="nastya.bakhshyieva">
+        <addForeignKeyConstraint baseTableName="articles"
+                                 baseColumnNames="author_id"
+                                 constraintName="fk_article_author"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"/>
+    </changeSet>
+
+    <changeSet id="1.0.3" author="nastya.bakhshyieva">
+        <createTable tableName="comments">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="message" type="varchar(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="post_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="author_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValue="current_timestamp()">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1.0.4" author="nastya.bakhshyieva">
+        <addForeignKeyConstraint baseTableName="comments"
+                                 baseColumnNames="post_id"
+                                 constraintName="fk_comment_article"
+                                 referencedTableName="articles"
+                                 referencedColumnNames="id"
+                                 onUpdate="RESTRICT"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="1.0.5" author="nastya.bakhshyieva">
+        <addForeignKeyConstraint baseTableName="comments"
+                                 baseColumnNames="author_id"
+                                 constraintName="fk_comment_author"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"/>
+    </changeSet>
+
+    <changeSet id="1.0.6" author="nastya.bakhshyieva">
+        <createTable tableName="tags">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1.0.7" author="nastya.bakhshyieva">
+        <createTable tableName="tags_articles">
+            <column name="post_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tag_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1.0.8" author="nastya.bakhshyieva">
+        <addForeignKeyConstraint baseTableName="tags_articles"
+                                 baseColumnNames="post_id"
+                                 constraintName="fk_tags_articles_articles"
+                                 referencedTableName="articles"
+                                 referencedColumnNames="id"
+                                 onUpdate="RESTRICT"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="1.0.9" author="nastya.bakhshyieva">
+        <addForeignKeyConstraint baseTableName="tags_articles"
+                                 baseColumnNames="tag_id"
+                                 constraintName="fk_tags_articles_tags"
+                                 referencedTableName="tags"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -8,8 +8,7 @@ import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 
-@RestController
-@RequestMapping(value = "/articles")
+@RestController("/articles")
 public class CommentsRestController {
 
 

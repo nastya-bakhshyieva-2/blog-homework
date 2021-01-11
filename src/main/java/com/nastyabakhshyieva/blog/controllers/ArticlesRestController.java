@@ -30,7 +30,8 @@ public class ArticlesRestController {
                                            @RequestParam(name = "q", required = false, defaultValue = "") String postTitle,
                                            @RequestParam(name = "author", required = false, defaultValue = "0") Long authorId,
                                            @RequestParam(name = "sort", required = false, defaultValue = "id") String fieldName,
-                                           @RequestParam(name = "order", required = false, defaultValue = "asc") String order) {
+                                           @RequestParam(name = "order", required = false, defaultValue = "asc") String order,
+                                           @RequestParam(name = "tags", required = false, defaultValue = "") String[] tags) {
         return null;
     }
 
