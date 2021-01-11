@@ -7,6 +7,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -33,4 +34,10 @@ public class Article {
     @Column(name = "updated_at")
     @LastModifiedDate
     private Date updatedAt;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "tags_articles",
+            joinColumns = {@JoinColumn(name = "post_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "tag_id", referencedColumnName = "id")})
+    private List<Tag> tags;
 }
