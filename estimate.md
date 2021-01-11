@@ -5,9 +5,10 @@
 <ul>
 <li>Create packages (repositories, entities, controllers) - <strong>10 minutes</strong></li>
 <li>Create simple mock classes (repositories, entities, controllers)  - <strong>15 minutes</strong></li>
-<li>Create endpoints (main) - <strong>20 minutes</strong></li>
+<li>Create endpoints (main) - <strong>20 minutes</strong> <small>(Taken around 1 hour and 20 minutes )</small></li> 
 </ul>    
 <h5> Total time: 45 minutes</h5>
+<h5> DONE - taken around 2 hours</h5>
 <br>
 <h3> 2. Creation simple structure with Spring JPA;</h3>
 <ul>
