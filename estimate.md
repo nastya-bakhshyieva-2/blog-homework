@@ -31,6 +31,7 @@
 <li>Configure everything with Spring Security - <strong>30 minutes</strong></li>
 </ul>    
 <h5> Total time: 3:20</h5>
+<h5> DONE - taken 1:10</h5>
 <br>
 <h3> 4. Implementation controllers(endpoints) logic</h3>
 <ul>
