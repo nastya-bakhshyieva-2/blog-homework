@@ -1,4 +1,4 @@
-package com.nastyabakhshyieva.blog.service;
+package com.nastyabakhshyieva.blog.security;
 
 import com.nastyabakhshyieva.blog.entities.User;
 import com.nastyabakhshyieva.blog.repositories.UserRepository;

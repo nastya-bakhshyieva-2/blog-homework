@@ -1,9 +1,10 @@
-package com.nastyabakhshyieva.blog.service;
+package com.nastyabakhshyieva.blog.service.impl;
 
 import com.nastyabakhshyieva.blog.dto.UserDto;
 import com.nastyabakhshyieva.blog.entities.User;
-import com.nastyabakhshyieva.blog.entities.util.UserStatus;
+import com.nastyabakhshyieva.blog.entities.status.UserStatus;
 import com.nastyabakhshyieva.blog.repositories.UserRepository;
+import com.nastyabakhshyieva.blog.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,7 +15,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
