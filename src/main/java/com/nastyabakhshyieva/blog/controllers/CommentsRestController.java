@@ -2,43 +2,58 @@ package com.nastyabakhshyieva.blog.controllers;
 
 import com.nastyabakhshyieva.blog.dto.CommentDto;
 import com.nastyabakhshyieva.blog.entities.Comment;
+import com.nastyabakhshyieva.blog.service.CommentService;
+import com.nastyabakhshyieva.blog.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 
-@RestController("/articles")
+@RestController
+@RequestMapping("/articles")
 public class CommentsRestController {
 
+    private final CommentService commentService;
+    private final UserService userService;
+
+    @Autowired
+    public CommentsRestController(CommentService commentService, UserService userService) {
+        this.commentService = commentService;
+        this.userService = userService;
+    }
 
     @PostMapping("/{id}/comments")
-    public Comment addComment(@PathVariable(name = "id") Long postId, @RequestBody @Valid CommentDto commentDto, Principal principal) {
-        return null;
+    public ResponseEntity<Object> addComment(@PathVariable(name = "id") Long postId, @RequestBody @Valid CommentDto commentDto, BindingResult bindingResult, Principal principal) {
+
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>("Message is empty!", HttpStatus.BAD_REQUEST);
+        }
+
+        Comment created = commentService.createComment(postId, commentDto, userService.findByEmail(principal.getName()));
+        return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
 
     @GetMapping("/{id}/comments")
-    public List<Comment> getAllComments(@PathVariable(name = "id") Long postId,
-                                        @RequestParam(name = "skip", required = false, defaultValue = "0") Long skip,
-                                        @RequestParam(name = "limit", required = false, defaultValue = "10") Long limit,
-                                        @RequestParam(name = "q", required = false, defaultValue = "") String postTitle,
-                                        @RequestParam(name = "author", required = false, defaultValue = "0") Long authorId,
-                                        @RequestParam(name = "sort", required = false, defaultValue = "id") String fieldName,
-                                        @RequestParam(name = "order", required = false, defaultValue = "asc") String order) {
-        return null;
+    public List<Comment> getAllComments(@PathVariable(name = "id") Long articleId) {
+        return commentService.getAllComments(articleId);
     }
 
 
     @GetMapping("/{postId}/comments/{commentId}")
     public Comment getComment(@PathVariable Long postId, @PathVariable Long commentId) {
-        return null;
+        return commentService.getParticularComment(postId, commentId);
     }
 
 
     @DeleteMapping("/{postId}/comments/{commentId}")
     public Comment deleteComment(@PathVariable Long postId, @PathVariable Long commentId, Principal principal) {
-        return null;
+        return commentService.deleteComment(postId, commentId, userService.findByEmail(principal.getName()));
     }
 
 }
