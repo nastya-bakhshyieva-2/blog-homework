@@ -7,6 +7,7 @@ import com.nastyabakhshyieva.blog.entities.status.ArticleStatus;
 import com.nastyabakhshyieva.blog.repositories.ArticleRepository;
 import com.nastyabakhshyieva.blog.repositories.TagRepository;
 import com.nastyabakhshyieva.blog.service.ArticleService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
+@Slf4j
 public class ArticleServiceImpl implements ArticleService {
 
     private final ArticleRepository articleRepository;
@@ -45,6 +47,8 @@ public class ArticleServiceImpl implements ArticleService {
 
         articleRepository.save(article);
 
+        log.info("IN createArticle - article with title: {} successfully saved", article.getTitle());
+
         return article;
     }
 
@@ -54,6 +58,7 @@ public class ArticleServiceImpl implements ArticleService {
         Article article = articleRepository.findById(oldId).orElse(null);
 
         if (article == null || !article.getAuthorId().equals(owner.getId())) {
+            log.info("IN updateArticle - article is null or user hasn't permissions");
             return null;
         }
 
@@ -70,6 +75,8 @@ public class ArticleServiceImpl implements ArticleService {
 
         articleRepository.save(article);
 
+        log.info("IN updateArticle - article with title: {} successfully updated", article.getTitle());
+
         return article;
 
     }
@@ -85,13 +92,21 @@ public class ArticleServiceImpl implements ArticleService {
         articleStream = sortByFieldName(articleStream,fieldName);
         articleStream = order(articleStream, order);
 
-        return articleStream.collect(Collectors.toList());
+        List<Article> res = articleStream.collect(Collectors.toList());
+
+        log.info("IN getAllPublicPosts - general size of requested posts: {}", res.size());
+
+        return res;
     }
 
     @Override
     public List<Article> getOwnerPosts(User user) {
 
-        return articleRepository.findByAuthorId(user.getId());
+        List<Article> res = articleRepository.findByAuthorId(user.getId());
+
+        log.info("IN getOwnerPosts - general size of user's posts: {}", res.size());
+
+        return res;
     }
 
     @Override
@@ -106,6 +121,9 @@ public class ArticleServiceImpl implements ArticleService {
         article.getTags().forEach(t -> t.getArticles().remove(article));
 
         articleRepository.deleteById(id);
+
+        log.info("IN deletePost - post with id: {} successfully deleted", id);
+
         return article;
     }
 
