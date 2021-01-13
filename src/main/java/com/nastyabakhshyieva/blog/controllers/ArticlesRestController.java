@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -29,7 +30,7 @@ public class ArticlesRestController {
                                            @RequestParam(name = "limit", required = false, defaultValue = "10") Long limit,
                                            @RequestParam(name = "q", required = false, defaultValue = "") String postTitle,
                                            @RequestParam(name = "author", required = false, defaultValue = "0") Long authorId,
-                                           @RequestParam(name = "sort", required = false, defaultValue = "id") String fieldName,
+                                           @RequestParam(name = "sort", required = false, defaultValue = "none") String fieldName,
                                            @RequestParam(name = "order", required = false, defaultValue = "asc") String order,
                                            @RequestParam(name = "tags", required = false, defaultValue = "") String[] tags) {
         return null;
@@ -38,7 +39,9 @@ public class ArticlesRestController {
 
     @GetMapping("/my")
     public List<Article> getMyPosts(Principal principal) {
-        return null;
+        Article article = new Article();
+        article.setTitle(principal.getName());
+        return Collections.singletonList(article);
     }
 
 
