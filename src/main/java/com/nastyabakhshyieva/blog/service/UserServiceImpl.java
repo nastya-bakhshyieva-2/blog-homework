@@ -4,13 +4,16 @@ import com.nastyabakhshyieva.blog.dto.UserDto;
 import com.nastyabakhshyieva.blog.entities.User;
 import com.nastyabakhshyieva.blog.entities.util.UserStatus;
 import com.nastyabakhshyieva.blog.repositories.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
@@ -43,8 +46,10 @@ public class UserServiceImpl implements UserService{
         user.setEmail(userDto.getEmail());
         user.setPassword(encoder.encode(userDto.getPassword()));
         user.setStatus(UserStatus.NON_ACTIVATED);
+        user.setCreatedAt(new Date());
 
         userRepository.save(user);
+        log.info("IN registerUser - User with email: {} successfully registered", user.getEmail());
 
         return true;
     }

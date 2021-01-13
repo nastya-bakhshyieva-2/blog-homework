@@ -6,6 +6,7 @@ import com.nastyabakhshyieva.blog.entities.User;
 import com.nastyabakhshyieva.blog.security.jwt.JwtTokenProvider;
 import com.nastyabakhshyieva.blog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -25,10 +26,9 @@ import java.util.Map;
 public class AuthenticationRestController {
 
     private final AuthenticationManager authenticationManager;
-
     private final JwtTokenProvider jwtTokenProvider;
-
     private final UserService userService;
+
 
     @Autowired
     public AuthenticationRestController(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, UserService userService) {
@@ -36,6 +36,7 @@ public class AuthenticationRestController {
         this.jwtTokenProvider = jwtTokenProvider;
         this.userService = userService;
     }
+
 
     @PostMapping("/login")
     public ResponseEntity<Map<Object, Object>> login(@RequestBody AuthenticationRequestDto requestDto) {
@@ -62,18 +63,22 @@ public class AuthenticationRestController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<Map<Object, Object>> register(@RequestBody @Valid UserDto userDto, BindingResult bindingResult) {
+    public ResponseEntity<String> register(@RequestBody @Valid UserDto userDto, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
-            throw new BadCredentialsException("Field are not meet the requirements");
+            return new ResponseEntity<>("Fields are not meet the requirements",
+                    HttpStatus.BAD_REQUEST);
+        } else if (!userDto.getPassword().equals(userDto.getRepeatPassword())) {
+            return new ResponseEntity<>("Passwords aren't equals",
+                    HttpStatus.BAD_REQUEST);
         }
 
         if (userService.registerUser(userDto)) {
-            AuthenticationRequestDto authenticationRequestDto = new AuthenticationRequestDto(userDto.getEmail(), userDto.getPassword());
-            return login(authenticationRequestDto);
+            return new ResponseEntity<>("User successfully registered. Please, check your email and verify the account",
+                    HttpStatus.CREATED);
         } else {
-            throw new BadCredentialsException("User with this username already exists");
+            return new ResponseEntity<>("User with this email already exists",
+                    HttpStatus.BAD_REQUEST);
         }
-
     }
 }

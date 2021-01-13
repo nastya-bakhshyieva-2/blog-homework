@@ -19,7 +19,7 @@ public final class UserDetailsFactory {
                 user.getEmail(),
                 user.getCreatedAt(),
                 user.getStatus(),
-                Collections.singletonList(new SimpleGrantedAuthority("USER")));
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
     }
 
 }

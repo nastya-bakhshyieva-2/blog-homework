@@ -2,7 +2,6 @@ package com.nastyabakhshyieva.blog.service;
 
 import com.nastyabakhshyieva.blog.dto.UserDto;
 import com.nastyabakhshyieva.blog.entities.User;
-import org.springframework.stereotype.Service;
 
 
 public interface UserService {
