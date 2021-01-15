@@ -6,6 +6,7 @@ import com.nastyabakhshyieva.blog.entities.User;
 import com.nastyabakhshyieva.blog.security.jwt.JwtTokenProvider;
 import com.nastyabakhshyieva.blog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -39,7 +40,14 @@ public class AuthenticationRestController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<Map<Object, Object>> login(@RequestBody AuthenticationRequestDto requestDto) {
+    public ResponseEntity<Map<Object, Object>> login(@RequestBody @Valid AuthenticationRequestDto requestDto, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+
+            throw new BadCredentialsException("Email or password is empty");
+
+        }
+
         try {
             String username = requestDto.getEmail();
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, requestDto.getPassword()));
@@ -57,7 +65,7 @@ public class AuthenticationRestController {
 
             return ResponseEntity.ok(response);
         } catch (AuthenticationException e) {
-            throw new BadCredentialsException("Invalid username or password");
+            throw new BadCredentialsException("Invalid email or password");
         }
     }
 
@@ -66,19 +74,16 @@ public class AuthenticationRestController {
     public ResponseEntity<String> register(@RequestBody @Valid UserDto userDto, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
-            return new ResponseEntity<>("Fields are not meet the requirements",
-                    HttpStatus.BAD_REQUEST);
+            throw new BadCredentialsException("Fields are not meet the requirements");
         } else if (!userDto.getPassword().equals(userDto.getRepeatPassword())) {
-            return new ResponseEntity<>("Passwords aren't equals",
-                    HttpStatus.BAD_REQUEST);
+            throw new BadCredentialsException("Passwords aren't equals");
         }
 
         if (userService.registerUser(userDto)) {
             return new ResponseEntity<>("User successfully registered. Please, check your email and verify the account",
                     HttpStatus.CREATED);
         } else {
-            return new ResponseEntity<>("User with this email already exists",
-                    HttpStatus.BAD_REQUEST);
+            throw new BadCredentialsException("User with this email already exists");
         }
     }
 }

@@ -5,13 +5,15 @@ import com.nastyabakhshyieva.blog.entities.Article;
 import com.nastyabakhshyieva.blog.entities.User;
 import com.nastyabakhshyieva.blog.entities.status.ArticleStatus;
 import com.nastyabakhshyieva.blog.repositories.ArticleRepository;
-import com.nastyabakhshyieva.blog.repositories.TagRepository;
+import com.nastyabakhshyieva.blog.repositories.custom.ArticlesRepositoryCustom;
 import com.nastyabakhshyieva.blog.service.ArticleService;
+import com.nastyabakhshyieva.blog.service.TagService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -20,16 +22,20 @@ import java.util.stream.Stream;
 public class ArticleServiceImpl implements ArticleService {
 
     private final ArticleRepository articleRepository;
-    private final TagRepository tagRepository;
+    private final ArticlesRepositoryCustom articlesRepositoryCustom;
+    private final TagService tagService;
+
 
     @Autowired
-    public ArticleServiceImpl(ArticleRepository articleRepository, TagRepository tagRepository) {
+    public ArticleServiceImpl(ArticleRepository articleRepository, ArticlesRepositoryCustom articlesRepositoryCustom, TagService tagService) {
         this.articleRepository = articleRepository;
-        this.tagRepository = tagRepository;
+        this.articlesRepositoryCustom = articlesRepositoryCustom;
+        this.tagService = tagService;
     }
 
     @Override
     public Article createArticle(ArticleDto articleDto, User owner) {
+
         Article article = new Article();
         article.setTitle(articleDto.getTitle());
         article.setText(articleDto.getText());
@@ -43,7 +49,7 @@ public class ArticleServiceImpl implements ArticleService {
         article.setCreatedAt(new Date());
         article.setUpdatedAt(new Date());
 
-        saveTagsIfNotExist(articleDto, article);
+        tagService.saveTagsIfNotExist(articleDto, article);
 
         articleRepository.save(article);
 
@@ -71,7 +77,7 @@ public class ArticleServiceImpl implements ArticleService {
             article.setStatus(newArticle.getStatus().equalsIgnoreCase("public") ? ArticleStatus.PUBLIC : ArticleStatus.DRAFT);
         }
 
-        saveTagsIfNotExist(newArticle, article);
+        tagService.saveTagsIfNotExist(newArticle, article);
 
         articleRepository.save(article);
 
@@ -84,13 +90,9 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public List<Article> getAllPublicPosts(Long skip, Long limit, String postTitle, Long authorId, String fieldName, String order, String[] tags) {
 
-        Stream<Article> articleStream = getArticlesRange(skip, limit);
+        Stream<Article> articleStream = articlesRepositoryCustom.getCriteriaArticles(skip, limit, postTitle, authorId, fieldName, order).stream();
 
-        articleStream = filterByTitle(articleStream, postTitle);
-        articleStream = filterByAuthorId(articleStream, authorId);
         articleStream = filterByTags(articleStream, tags);
-        articleStream = sortByFieldName(articleStream,fieldName);
-        articleStream = order(articleStream, order);
 
         List<Article> res = articleStream.collect(Collectors.toList());
 
@@ -127,87 +129,6 @@ public class ArticleServiceImpl implements ArticleService {
         return article;
     }
 
-    private void saveTagsIfNotExist(ArticleDto articleDto, Article article) {
-
-        if (articleDto.getTags() != null) {
-
-            articleDto.getTags().forEach(t -> t.getArticles().add(article));
-
-            articleDto.getTags().removeAll(articleDto.getTags().stream()
-                    .map(t -> tagRepository.findByName(t.getName()))
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toSet()));
-
-            tagRepository.saveAll(articleDto.getTags());
-
-        }
-
-    }
-
-    private Stream<Article> getArticlesRange(Long from, Long to) {
-
-        return articleRepository.findRange(from, to).stream();
-
-    }
-
-    private Stream<Article> filterByTitle(Stream<Article> articleStream, String title) {
-
-        if (title.equals("")) {
-            return articleStream;
-        } else {
-             return articleStream.filter(a -> a.getTitle().equalsIgnoreCase(title));
-        }
-    }
-
-    private Stream<Article> filterByAuthorId(Stream<Article> articleStream, Long id) {
-
-        if (id == 0L) {
-            return articleStream;
-        } else {
-            return articleStream.filter(a -> a.getAuthorId().equals(id));
-        }
-    }
-
-    private Stream<Article> sortByFieldName(Stream<Article> articleStream, String fieldName) {
-
-        switch (fieldName.toLowerCase()) {
-
-            case "id":
-                return articleStream.sorted(Comparator.comparing(Article::getId));
-
-            case "title":
-                return articleStream.sorted(Comparator.comparing(Article::getTitle));
-
-            case "text":
-                return articleStream.sorted(Comparator.comparing(Article::getText));
-
-            case "status":
-                return articleStream.sorted(Comparator.comparing(Article::getStatus));
-
-            case "authorid":
-                return articleStream.sorted(Comparator.comparing(Article::getAuthorId));
-
-            case "createdat":
-                return articleStream.sorted(Comparator.comparing(Article::getCreatedAt));
-
-            case "updatedat":
-                return articleStream.sorted(Comparator.comparing(Article::getUpdatedAt));
-
-            default:
-                return articleStream;
-
-        }
-    }
-
-    private Stream<Article> order(Stream<Article> articleStream, String order) {
-
-        if (order.equalsIgnoreCase("desc")) {
-            return articleStream.sorted(Collections.reverseOrder());
-        }
-
-        return articleStream;
-    }
-
     private Stream<Article> filterByTags(Stream<Article> articleStream, String[] tags) {
 
         if (tags.length == 0) {
@@ -218,4 +139,5 @@ public class ArticleServiceImpl implements ArticleService {
                         .anyMatch(tag -> Stream.of(tags)
                                 .anyMatch(searchingTag -> searchingTag.equalsIgnoreCase(tag.getName()))));
     }
+
 }
