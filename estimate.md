@@ -1,7 +1,7 @@
 <h1> Steps of creation a simple REST Blog API</h1>
 <hr>
 <br>
-<h3> 1. Creation simple starter structure (directories, files)</h3>
+<h3> 1. Create simple starter structure (directories, files)</h3>
 <ul>
 <li>Create packages (repositories, entities, controllers) - <strong>10 minutes</strong></li>
 <li>Create simple mock classes (repositories, entities, controllers)  - <strong>15 minutes</strong></li>
@@ -10,7 +10,7 @@
 <h5> Total time: 45 minutes</h5>
 <h5> DONE - taken around 2 hours</h5>
 <br>
-<h3> 2. Creation simple structure with Spring JPA;</h3>
+<h3> 2. Create simple structure with Spring JPA;</h3>
 <ul>
 <li>Create content of POJO-classes: User, Comments, etc. - <strong>30 minutes</strong><small>(done in previous step)</small></li>
 <li>Link classes to db (also create liquibase changelog) - <strong>40 minutes</strong></li>
@@ -20,7 +20,7 @@
 <h5> Total time: 1:55</h5>
 <h5>DONE - taken around 40 minutes</h5>
 <br>
-<h3> 3. Configure Spring Security and add jwt token support </h3>
+<h3> 3. Configure Spring Security and add jwt token </h3>
 <ul>
 <li>Implement UserDetails - <strong>30 minutes</strong></li>
 <li>Implement UserDetailsService - <strong>30 minutes</strong></li>
@@ -33,7 +33,7 @@
 <h5> Total time: 3:20</h5>
 <h5> DONE - taken 1:10</h5>
 <br>
-<h3> 4. Implementation controllers(endpoints) logic</h3>
+<h3> 4. Implement controllers(endpoints) logic</h3>
 <ul>
 <li>AuthController - <strong>30 minutes</strong></li>
 <li>Login - <strong>30 minutes</strong></li>
@@ -43,6 +43,7 @@
 <li>FilterController - <strong>30 minutes</strong></li>
 </ul>    
 <h5> Total time: around 3 hours</h5>
+<h5> DONE - taken around 16 hours :(</h5>
 <br>
 <h3> 5. Sending mail</h3>
 <ul>

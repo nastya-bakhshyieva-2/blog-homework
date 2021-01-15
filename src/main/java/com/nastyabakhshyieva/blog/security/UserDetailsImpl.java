@@ -1,6 +1,6 @@
 package com.nastyabakhshyieva.blog.security;
 
-import com.nastyabakhshyieva.blog.entities.util.UserStatus;
+import com.nastyabakhshyieva.blog.entities.status.UserStatus;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -8,6 +8,8 @@ public interface UserService {
 
     User findByEmail(String email);
 
+    User findById(Long id);
+
     boolean registerUser(UserDto userDto);
 
     boolean activateUser(String code);

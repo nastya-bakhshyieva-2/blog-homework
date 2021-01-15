@@ -1,6 +1,6 @@
 package com.nastyabakhshyieva.blog.entities;
 
-import com.nastyabakhshyieva.blog.entities.util.UserStatus;
+import com.nastyabakhshyieva.blog.entities.status.UserStatus;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 

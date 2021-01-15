@@ -1,21 +1,29 @@
 package com.nastyabakhshyieva.blog.controllers;
 
-import com.nastyabakhshyieva.blog.entities.Tag;
+import com.nastyabakhshyieva.blog.dto.TagResponse;
+import com.nastyabakhshyieva.blog.service.TagService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
+import java.util.List;
 
-@RestController("/tags-cloud")
+@RestController
+@RequestMapping("/tags-cloud")
 public class TagsRestController {
 
-//    @GetMapping("/articles")
-//    public List<Article> getArticlesByTags(@RequestParam(name = "tags") String[] tags) {
-//        return null;
-//    }
+    private final TagService tagService;
+
+    @Autowired
+    public TagsRestController(TagService tagService) {
+        this.tagService = tagService;
+    }
 
     @GetMapping
-    public Map<Tag, Long> countTags() {
-        return null;
+    public List<TagResponse> countTags() {
+
+        return tagService.getAllTags();
+
     }
 }

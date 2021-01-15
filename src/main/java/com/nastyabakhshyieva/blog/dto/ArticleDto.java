@@ -1,11 +1,10 @@
 package com.nastyabakhshyieva.blog.dto;
 
 import com.nastyabakhshyieva.blog.entities.Tag;
-import com.nastyabakhshyieva.blog.entities.util.ArticleStatus;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import java.util.List;
+import java.util.Set;
 
 @Data
 public class ArticleDto {
@@ -16,9 +15,7 @@ public class ArticleDto {
     @NotBlank
     private String text;
 
-    @NotBlank
-    private ArticleStatus status;
-
-    private List<Tag> tags;
+    private String status;
+    private Set<Tag> tags;
 
 }
