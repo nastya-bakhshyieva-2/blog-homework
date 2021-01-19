@@ -53,6 +53,7 @@
 <li>Add reset password feature and edit appropriate controller <strong>40 minutes</strong></li>
 </ul>    
 <h5> Total time: 2:40 - 3:30 (around)</h5>
+<h5> DONE - taken around 4 hours</h5>
 <br>
 <h3> 6. Tests + Docker</h3>
 <ul>

@@ -37,12 +37,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean registerUser(UserDto userDto) {
+    public User registerUser(UserDto userDto) {
 
         Optional<User> userFromDb = userRepository.findByEmail(userDto.getEmail());
 
         if (userFromDb.isPresent()) {
-            return false;
+            return null;
         }
 
         User user = new User();
@@ -54,14 +54,41 @@ public class UserServiceImpl implements UserService {
         user.setStatus(UserStatus.NON_ACTIVATED);
         user.setCreatedAt(new Date());
 
-        userRepository.save(user);
+        user = userRepository.save(user);
         log.info("IN registerUser - User with email: {} successfully registered", user.getEmail());
+
+        return user;
+    }
+
+    @Override
+    public boolean activateUser(Long id) {
+
+        Optional<User> user = userRepository.findById(id);
+
+        if (!user.isPresent()) {
+            return false;
+        }
+
+        User u = user.get();
+        u.setStatus(UserStatus.ACTIVATED);
+        userRepository.save(u);
 
         return true;
     }
 
     @Override
-    public boolean activateUser(String code) {
-        return false;
+    public boolean updatePassword(Long id, String newPassword) {
+
+        Optional<User> user = userRepository.findById(id);
+
+        if (!user.isPresent()) {
+            return false;
+        }
+
+        User foundedUser = user.get();
+        foundedUser.setPassword(encoder.encode(newPassword));
+        userRepository.save(foundedUser);
+
+        return true;
     }
 }

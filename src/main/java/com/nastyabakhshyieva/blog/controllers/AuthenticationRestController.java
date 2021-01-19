@@ -1,13 +1,10 @@
 package com.nastyabakhshyieva.blog.controllers;
 
 import com.nastyabakhshyieva.blog.dto.AuthenticationRequestDto;
-import com.nastyabakhshyieva.blog.dto.UserDto;
 import com.nastyabakhshyieva.blog.entities.User;
 import com.nastyabakhshyieva.blog.security.jwt.JwtTokenProvider;
 import com.nastyabakhshyieva.blog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -44,7 +41,7 @@ public class AuthenticationRestController {
 
         if (bindingResult.hasErrors()) {
 
-            throw new BadCredentialsException("Email or password is empty");
+            throw new BadCredentialsException(bindingResult.toString());
 
         }
 
@@ -64,26 +61,10 @@ public class AuthenticationRestController {
             response.put("token", token);
 
             return ResponseEntity.ok(response);
+
         } catch (AuthenticationException e) {
-            throw new BadCredentialsException("Invalid email or password");
+            throw new BadCredentialsException("Invalid email or password, or user isn't activated");
         }
     }
 
-
-    @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody @Valid UserDto userDto, BindingResult bindingResult) {
-
-        if (bindingResult.hasErrors()) {
-            throw new BadCredentialsException("Fields are not meet the requirements");
-        } else if (!userDto.getPassword().equals(userDto.getRepeatPassword())) {
-            throw new BadCredentialsException("Passwords aren't equals");
-        }
-
-        if (userService.registerUser(userDto)) {
-            return new ResponseEntity<>("User successfully registered. Please, check your email and verify the account",
-                    HttpStatus.CREATED);
-        } else {
-            throw new BadCredentialsException("User with this email already exists");
-        }
-    }
 }
