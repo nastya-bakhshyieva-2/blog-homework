@@ -10,7 +10,7 @@ public interface UserService {
 
     User findById(Long id);
 
-    boolean registerUser(UserDto userDto);
+    User registerUser(UserDto userDto);
 
-    boolean activateUser(String code);
+    boolean activateUser(Long id);
 }
