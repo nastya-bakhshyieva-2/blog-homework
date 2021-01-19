@@ -35,7 +35,9 @@ public class RegisterRestController {
 
         if (bindingResult.hasErrors()) {
             throw new BadCredentialsException("Fields are not meet the requirements");
+
         } else if (!userDto.getPassword().equals(userDto.getRepeatPassword())) {
+
             throw new BadCredentialsException("Passwords aren't equals");
         }
 

@@ -4,9 +4,11 @@ import com.nastyabakhshyieva.blog.entities.ActivationCode;
 import com.nastyabakhshyieva.blog.entities.User;
 import com.nastyabakhshyieva.blog.repositories.ActivationCodeRepo;
 import com.nastyabakhshyieva.blog.service.ActivationCodeService;
+import com.nastyabakhshyieva.blog.service.MailSender;
 import com.nastyabakhshyieva.blog.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,11 +21,16 @@ public class ActivationCodeServiceImpl implements ActivationCodeService {
 
     private final ActivationCodeRepo activationCodeRepo;
     private final UserService userService;
+    private final MailSender mailSender;
+
+    @Value("${activation.address}")
+    private String address;
 
     @Autowired
-    public ActivationCodeServiceImpl(ActivationCodeRepo activationCodeRepo, UserService userService) {
+    public ActivationCodeServiceImpl(ActivationCodeRepo activationCodeRepo, UserService userService, MailSender mailSender) {
         this.activationCodeRepo = activationCodeRepo;
         this.userService = userService;
+        this.mailSender = mailSender;
     }
 
     @Override
@@ -35,6 +42,15 @@ public class ActivationCodeServiceImpl implements ActivationCodeService {
         activationCode.setCode(uuid);
         activationCode.setUserId(user.getId());
 
+        activationCodeRepo.save(activationCode);
+
+        String msg = String.format("Hello, %s %s!\n" +
+                "Please, follow next link to verify your account - %s",
+                user.getFirstName(), user.getLastName(),
+                address + uuid);
+
+        mailSender.send(user.getEmail(), "Activation link", msg);
+
     }
 
     @Override
@@ -44,7 +60,9 @@ public class ActivationCodeServiceImpl implements ActivationCodeService {
 
         if (!codeFromDb.isPresent()) {
             return false;
-        } else if (codeFromDb.get().getExpiration().isAfter(LocalDateTime.now())) {
+
+        } else if (codeFromDb.get().getExpiration().isBefore(LocalDateTime.now())) {
+
             activationCodeRepo.delete(codeFromDb.get());
             return false;
         }
@@ -57,16 +75,50 @@ public class ActivationCodeServiceImpl implements ActivationCodeService {
 
     @Override
     public boolean forgotPassword(String email) {
-        return false;
+
+        User user = userService.findByEmail(email);
+
+        if (user == null) {
+            return false;
+        }
+
+        String uuid = UUID.randomUUID().toString();
+        ActivationCode code = new ActivationCode();
+        code.setCode(uuid);
+        code.setUserId(user.getId());
+
+        activationCodeRepo.save(code);
+
+        String msg = String.format("Hello, %s %s!\n" +
+                "Your reset password code - %s. Please, send a POST request with this code and your new_password",
+                user.getFirstName(), user.getLastName(), uuid);
+
+        mailSender.send(email, "Reset password", msg);
+
+        return true;
     }
 
     @Override
     public boolean resetPassword(String code, String newPassword) {
-        return false;
+
+        Optional<ActivationCode> codeFromDb = activationCodeRepo.findById(code);
+
+        if (!codeFromDb.isPresent()) {
+            return false;
+        } else if (codeFromDb.get().getExpiration().isBefore(LocalDateTime.now())) {
+            activationCodeRepo.delete(codeFromDb.get());
+            return false;
+        }
+
+        return userService.updatePassword(codeFromDb.get().getUserId(), newPassword);
     }
 
     @Override
-    public boolean checkCodeValidity(String code) {
-        return false;
+    public LocalDateTime checkCodeValidity(String code) {
+
+        Optional<ActivationCode> activationCode = activationCodeRepo.findById(code);
+
+        return activationCode.map(ActivationCode::getExpiration).orElse(null);
+
     }
 }

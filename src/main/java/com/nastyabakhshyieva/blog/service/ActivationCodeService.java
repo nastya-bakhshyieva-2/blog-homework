@@ -2,6 +2,8 @@ package com.nastyabakhshyieva.blog.service;
 
 import com.nastyabakhshyieva.blog.entities.User;
 
+import java.time.LocalDateTime;
+
 public interface ActivationCodeService {
 
     void setActivationCode(User user);
@@ -12,6 +14,6 @@ public interface ActivationCodeService {
 
     boolean resetPassword(String code, String newPassword);
 
-    boolean checkCodeValidity(String code);
+    LocalDateTime checkCodeValidity(String code);
 
 }

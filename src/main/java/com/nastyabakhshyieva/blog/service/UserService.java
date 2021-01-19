@@ -13,4 +13,6 @@ public interface UserService {
     User registerUser(UserDto userDto);
 
     boolean activateUser(Long id);
+
+    boolean updatePassword(Long id, String newPassword);
 }

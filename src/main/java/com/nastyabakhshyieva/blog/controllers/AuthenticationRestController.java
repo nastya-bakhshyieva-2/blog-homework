@@ -41,7 +41,7 @@ public class AuthenticationRestController {
 
         if (bindingResult.hasErrors()) {
 
-            throw new BadCredentialsException("Email or password is empty");
+            throw new BadCredentialsException(bindingResult.toString());
 
         }
 
@@ -61,8 +61,9 @@ public class AuthenticationRestController {
             response.put("token", token);
 
             return ResponseEntity.ok(response);
+
         } catch (AuthenticationException e) {
-            throw new BadCredentialsException("Invalid email or password");
+            throw new BadCredentialsException("Invalid email or password, or user isn't activated");
         }
     }
 
